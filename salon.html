@@ -991,9 +991,21 @@
             100% { transform: translateX(100%); }
         }
 
+        /* New class for commented items */
+        .inspection-item.commented {
+            position: relative;
+        }
 
-
-      
+        .inspection-item.commented::after {
+            content: '';
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--primary);
+        }
     </style>
 </head>
 <body>
@@ -1051,7 +1063,7 @@
                             <i class="fas fa-info"></i>
                         </div>
                         <div class="task-icon comment" title="Добавить комментарий">
-                            <i class="fas fa-question" ></i>
+                            <i class="fas fa-question"></i>
                         </div>
                     </div>
                     <i class="fas fa-check"></i>
@@ -1073,9 +1085,9 @@
                 <div class="inspection-item animate-in delay-1" id="check-smells">
                     <span>Проверить отсутствие запахов</span>
                     <div class="task-icons">
-                        <div class="task-icon info" title="Показать пример">
+                        <!-- <div class="task-icon info" title="Показать пример">
                             <i class="fas fa-info"></i>
-                        </div>
+                        </div> -->
                         <div class="task-icon comment" title="Добавить комментарий">
                             <i class="fas fa-question"></i>
                         </div>
@@ -1138,7 +1150,7 @@
             <h3 class="modal-title">Осмотр салона завершен!</h3>
             <p style="margin-bottom: 1.5rem; text-align: center;">Спасибо за проведенный осмотр салона автомобиля.</p>
             <div class="modal-buttons" style="justify-content: center;">
-                <button class="modal-btn modal-btn-submit" id="modal-close" onclick="window.location.href='glav_pwa copy.html'">Закрыть</button>
+                <button class="modal-btn modal-btn-submit" id="modal-close" onclick="window.location.href='glav3.html'">Закрыть</button>
             </div>
         </div>
     </div>
@@ -1223,7 +1235,31 @@
             completedAreas: 0,
             rating: 0,
             finalComment: '',
-            taskComments: {}
+            taskComments: {
+                'seats': {
+                    text: 'Кнопка массажа работает с перебоями, иногда не включается',
+                    photos: [
+                        'https://a.d-cd.net/grVEzTDdA-o9iFC4TKJDIlwNV7M-960.jpg',
+                        'https://a.d-cd.net/6umAarUfzzUXKQ8RMHbwSNEGHhA-960.jpg'
+                    ]
+                },
+                'dashboard': {
+                    text: 'На приборной панели есть царапины в правом нижнем углу',
+                    photos: [
+                        'https://i.ytimg.com/vi/qV5yTkVscTE/maxresdefault.jpg',
+                        'https://a.d-cd.net/ZYAAAgHjoeA-960.jpg'
+
+                    ]
+                },
+                'electronics': {
+                    text: 'Мультимедийная система работает нормально, но есть проблемы с правым динамиком',
+                    photos: ['https://audi-rus.ru/img/nasha-rabota/Audi_Q3_Red/Audi_Q3_Red-15.jpg']
+                },
+                'smells': {
+                    text: 'Запахов не обнаружено, салон чистый',
+                    photos: []
+                }
+            }
         };
         
         // DOM elements
@@ -1287,21 +1323,21 @@
             ],
             'dashboard': [
                 {
-                    image: 'https://a.d-cd.net/5aAAAgG6ueA-960.jpg',
+                    image: 'https://a.d-cd.net/gYAAAgLEXeA-960.jpg',
                     caption: 'Осмотрите приборную панель на предмет повреждений'
                 },
                 {
-                    image: 'https://a.d-cd.net/7eAAAgG6ueA-960.jpg',
+                    image: 'https://images.drive.ru/i/0/5b07fd36ec05c4e84a000078',
                     caption: 'Проверьте работу всех индикаторов'
                 }
             ],
             'electronics': [
                 {
-                    image: 'https://a.d-cd.net/3aAAAgG6ueA-960.jpg',
+                    image: 'https://www.kibercar.com/upload/resize_cache/iblock/38c/tbe1c352og8s8q6owkp5cb1z5g521hgx/600_360_0/carplay_detal_audi.png',
                     caption: 'Проверьте работу мультимедийной системы'
                 },
                 {
-                    image: 'https://a.d-cd.net/8aAAAgG6ueA-960.jpg',
+                    image: 'https://a.d-cd.net/hEAAAgCIkeA-960.jpg',
                     caption: 'Убедитесь в исправности всех электронных систем'
                 }
             ],
@@ -1332,12 +1368,29 @@
             });
             
             document.querySelectorAll('.task-icon.comment').forEach(icon => {
-    icon.addEventListener('click', function(e) {
-        e.stopPropagation();
-        const taskId = this.closest('.inspection-item').id.replace('check-', '');
-        showTaskCommentModal(taskId);
-    });
-});
+                icon.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const taskId = this.closest('.inspection-item').id.replace('check-', '');
+                    showTaskCommentModal(taskId);
+                });
+            });
+            
+            // Mark items with comments
+            updateCommentIndicators();
+        }
+        
+        // Update comment indicators
+        function updateCommentIndicators() {
+            for (const taskId in appState.taskComments) {
+                const commentData = appState.taskComments[taskId];
+                const item = document.getElementById(`check-${taskId}`);
+                
+                if (commentData.text || (commentData.photos && commentData.photos.length > 0)) {
+                    item.classList.add('commented');
+                } else {
+                    item.classList.remove('commented');
+                }
+            }
         }
         
         // Show task comment modal
@@ -1395,6 +1448,9 @@
                 appState.taskComments[taskId].photos.forEach((photo, i) => {
                     addPhotoPreview(photo, i);
                 });
+                
+                // Update comment indicator
+                updateCommentIndicators();
             }
         }
         
@@ -1660,38 +1716,56 @@
         }
         
         // Show modal
-        // Show modal
-function showModal(modal) {
-    modal.style.display = 'flex';
-    setTimeout(() => {
-        // Проверяем, есть ли .modal-content или .comment-modal-content
-        const modalContent = modal.querySelector('.modal-content') || modal.querySelector('.comment-modal-content');
-        if (modalContent) {
-            modalContent.style.transform = 'translateY(0)';
-            modalContent.style.opacity = '1';
-        } else {
-            console.error('Modal content element not found');
+        function showModal(modal) {
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                // Проверяем, есть ли .modal-content или .comment-modal-content
+                const modalContent = modal.querySelector('.modal-content') || modal.querySelector('.comment-modal-content');
+                if (modalContent) {
+                    modalContent.style.transform = 'translateY(0)';
+                    modalContent.style.opacity = '1';
+                } else {
+                    console.error('Modal content element not found');
+                }
+            }, 10);
         }
-    }, 10);
-}
         
         // Hide modal
         function hideModal(modal) {
-    const modalContent = modal.querySelector('.modal-content') || modal.querySelector('.comment-modal-content');
-    if (modalContent) {
-        modalContent.style.transform = 'translateY(20px)';
-        modalContent.style.opacity = '0';
-        setTimeout(() => {
-            modal.style.display = 'none';
-        }, 300);
-    } else {
-        console.error('Modal content element not found');
-    }
-}
+            const modalContent = modal.querySelector('.modal-content') || modal.querySelector('.comment-modal-content');
+            if (modalContent) {
+                modalContent.style.transform = 'translateY(20px)';
+                modalContent.style.opacity = '0';
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                }, 300);
+            } else {
+                console.error('Modal content element not found');
+            }
+        }
         
         // Event listeners
         photoPlaceholder.addEventListener('click', () => {
-            photoInput.click();
+            // Use predefined photo for demo
+            const predefinedPhotos = {
+                'front': 'https://carexpert.ru/img/int1200/audi6i18-02.jpg',
+                'rear': 'https://lh6.googleusercontent.com/proxy/eZfTTDcwcVAOBzhQeQIH-451aQ09iWHtv-SSor0zgaOm2Welf413jEunO9bocTRbOrI1xz3uZomMsR3y7veR',
+                'trunk': 'https://i.infocar.ua/img/mats/8348/ins/1337241442205.jpg'
+            };
+            
+            photoPreview.src = predefinedPhotos[appState.currentArea];
+            photoPreview.style.display = 'block';
+            photoPlaceholder.style.display = 'none';
+            
+            // Save photo to current area
+            appState.areas[appState.currentArea].photo = predefinedPhotos[appState.currentArea];
+            
+            // Add slight zoom animation
+            photoPreview.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                photoPreview.style.transform = 'scale(1)';
+                photoPreview.style.transition = 'transform 0.5s ease';
+            }, 50);
         });
         
         photoInput.addEventListener('change', (e) => {
@@ -1751,6 +1825,9 @@ function showModal(modal) {
                             appState.taskComments[taskId].photos.forEach((photo, index) => {
                                 addPhotoPreview(photo, index);
                             });
+                            
+                            // Update comment indicator
+                            updateCommentIndicators();
                         }
                     };
                     
@@ -1821,36 +1898,27 @@ function showModal(modal) {
         
         // Save task comment
         taskCommentSubmit.addEventListener('click', function() {
-    const taskId = taskCommentModal.dataset.taskId;
-    
-    if (!appState.taskComments[taskId]) {
-        appState.taskComments[taskId] = {
-            text: '',
-            photos: []
-        };
-    }
-    
-    appState.taskComments[taskId].text = taskComment.value;
-    
-    // Добавляем класс commented для визуального индикатора
-    const inspectionItem = document.getElementById(`check-${taskId}`);
-    if (taskComment.value || appState.taskComments[taskId].photos.length > 0) {
-        inspectionItem.classList.add('commented');
-    } else {
-        inspectionItem.classList.remove('commented');
-    }
-    
-    // Показываем уведомление об успешном сохранении
-    // alert('Комментарий сохранен!');
-    
-    // Закрываем модальное окно
-    hideModal(taskCommentModal);
-});
-
+            const taskId = taskCommentModal.dataset.taskId;
+            
+            if (!appState.taskComments[taskId]) {
+                appState.taskComments[taskId] = {
+                    text: '',
+                    photos: []
+                };
+            }
+            
+            appState.taskComments[taskId].text = taskComment.value;
+            
+            // Update comment indicator
+            updateCommentIndicators();
+            
+            // Close modal
+            hideModal(taskCommentModal);
+        });
         
         taskCommentCancel.addEventListener('click', function() {
-    hideModal(taskCommentModal);
-});
+            hideModal(taskCommentModal);
+        });
 
         // Inspection items toggle
         inspectionItems.forEach(item => {
@@ -1992,7 +2060,7 @@ function showModal(modal) {
               .then(function(registration) {
                 console.log('ServiceWorker зарегистрирован:', registration.scope);
                 
-                // Отслеживание обновлений
+                // Отслеживание обновлений 
                 registration.addEventListener('updatefound', () => {
                   const newWorker = registration.installing;
                   newWorker.addEventListener('statechange', () => {
