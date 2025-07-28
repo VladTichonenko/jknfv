@@ -347,6 +347,54 @@
                 flex: 1;
             }
         }
+
+
+        /* QR Modal styles */
+.qr-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+}
+
+.qr-modal-content {
+    background: white;
+    border-radius: var(--radius);
+    width: 90%;
+    max-width: 400px;
+    padding: 20px;
+    position: relative;
+    text-align: center;
+}
+
+.qr-modal-close {
+    position: absolute;
+    top: 3px;
+    right: 15px;
+    font-size: 2.5rem;
+    cursor: pointer;
+    color: var(--gray);
+}
+
+.qr-modal-text {
+    margin: 20px 0;
+    font-size: 1rem;
+    color: var(--dark);
+}
+
+.qr-modal-image {
+    width: 350px;
+    height: auto;
+    margin: 0 auto;
+    display: block;
+}
+
     </style>
 </head>
 <body>
@@ -368,6 +416,8 @@
             <div class="qr-code">
                 <!-- QR code would be generated here -->
                 <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://vladtichonenko.github.io/diagnostik/diagnostik.html" alt="QR Code" onclick="window.location.href='https://vladtichonenko.github.io/diagnostik/diagnostik.html'">
+
+         
             </div>
             
             <div class="report-actions">
@@ -404,6 +454,15 @@
             <button class="modal-btn" id="modal-close-btn">Хорошо</button>
         </div>
     </div>
+
+    <!-- QR Modal -->
+<div class="qr-modal" id="qrModal">
+    <div class="qr-modal-content">
+        <span class="qr-modal-close" id="qrModalClose">&times;</span>
+        <p class="qr-modal-text">Разместите QR код на лобовом стекле для удобного доступа покупателей к информации о Вашем автомобиле.</p>
+        <img src="u4656954275_Hyper_realistic_cinematic_close_up_shot_of_a_skil_1d6c4661.png" alt="QR Code" class="qr-modal-image">
+    </div>
+</div>
     
     <script>
         // Simulate report generation
@@ -440,7 +499,7 @@
             // Share button functionality
             shareBtn.addEventListener('click', function() {
                 // Copy link to clipboard
-                navigator.clipboard.writeText('https://vladtichonenko.github.io/favdnkjndfs/diagnostik.html')
+                navigator.clipboard.writeText('https://vladtichonenko.github.io/diagnostik/diagnostik.html')
                     .then(() => {
                         // Show animation
                         shareAnimation.classList.add('show');
@@ -455,6 +514,35 @@
                         alert('Не удалось скопировать ссылку');
                     });
             });
+
+
+
+
+            // QR Modal functionality
+const qrModal = document.getElementById('qrModal');
+const qrModalClose = document.getElementById('qrModalClose');
+
+// Show modal after page loads
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        qrModal.style.display = 'flex';
+    }, 3500); // Small delay after preloader hides
+});
+
+// Close modal
+qrModalClose.addEventListener('click', function() {
+    qrModal.style.display = 'none';
+});
+
+// Close when clicking outside
+qrModal.addEventListener('click', function(e) {
+    if (e.target === qrModal) {
+        qrModal.style.display = 'none';
+    }
+});
+
+
+
             
             // Issues button functionality
             issuesBtn.addEventListener('click', function() {
