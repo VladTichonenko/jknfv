@@ -2,12 +2,12 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Осмотр салона</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#4285f4">
     <link rel="manifest" href="/manifest.json">
 
@@ -34,6 +34,7 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
         
         body {
@@ -41,6 +42,7 @@
             color: var(--dark);
             min-height: 100vh;
             overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
         }
         
         .container {
@@ -241,8 +243,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1.2rem;
-            margin-bottom: 0.8rem;
+            padding: 1.2rem 1rem;
+            margin-bottom: 1rem;
             border-radius: var(--radius);
             background: var(--light);
             cursor: pointer;
@@ -278,6 +280,7 @@
             z-index: 2;
             font-weight: 500;
             flex-grow: 1;
+            margin-right: 12px;
         }
         
         .inspection-item i {
@@ -301,6 +304,47 @@
         
         .inspection-item.checked::before {
             display: none;
+        }
+        
+        /* Task icons - Improved layout */
+        .task-icons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-left: 12px;
+            align-items: center;
+        }
+        
+        .task-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            flex-shrink: 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-left: -60px;
+        }
+        
+        .task-icon i {
+            font-size: 16px;
+        }
+        
+        .task-icon.info {
+            background: rgba(30, 41, 59, 0.1);
+            color: rgba(30, 41, 59, 0.8);
+        }
+        
+        .task-icon.comment {
+            background: rgba(72, 149, 239, 0.1);
+            color: rgba(72, 149, 239, 0.8);
+        }
+        
+        .task-icon:hover {
+            transform: scale(1.1);
         }
         
         /* Action buttons */
@@ -410,6 +454,7 @@
             margin-bottom: 1.5rem;
             resize: none;
             font-family: 'Inter', sans-serif;
+            font-size: 16px; /* Увеличенный размер шрифта для iOS */
         }
         
         .modal-buttons {
@@ -668,36 +713,20 @@
             margin-right: 0.5rem;
         }
 
-        /* Task icons */
-        .task-icons {
-            display: flex;
-            gap: 10px;
-            margin-left: 10px;
+        /* New class for commented items */
+        .inspection-item.commented {
+            position: relative;
         }
 
-        .task-icon {
-            width: 24px;
-            height: 24px;
+        .inspection-item.commented::after {
+            content: '';
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .task-icon.info {
-            background: rgba(30, 41, 59, 0.1);
-            color: rgba(30, 41, 59, 0.8);
-        }
-
-        .task-icon.comment {
-            background: rgba(72, 149, 239, 0.1);
-            color: rgba(72, 149, 239, 0.8);
-        }
-
-        .task-icon:hover {
-            transform: scale(1.1);
+            background: var(--primary);
         }
 
         /* Enhanced Stories modal styles */
@@ -990,22 +1019,6 @@
             0% { transform: translateX(-100%); }
             100% { transform: translateX(100%); }
         }
-
-        /* New class for commented items */
-        .inspection-item.commented {
-            position: relative;
-        }
-
-        .inspection-item.commented::after {
-            content: '';
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--primary);
-        }
     </style>
 </head>
 <body>
@@ -1085,9 +1098,6 @@
                 <div class="inspection-item animate-in delay-1" id="check-smells">
                     <span>Проверить отсутствие запахов</span>
                     <div class="task-icons">
-                        <!-- <div class="task-icon info" title="Показать пример">
-                            <i class="fas fa-info"></i>
-                        </div> -->
                         <div class="task-icon comment" title="Добавить комментарий">
                             <i class="fas fa-question"></i>
                         </div>
@@ -1246,14 +1256,17 @@
                 'dashboard': {
                     text: 'На приборной панели есть царапины в правом нижнем углу',
                     photos: [
-                        'https://i.ytimg.com/vi/qV5yTkVscTE/maxresdefault.jpg',
-                        'https://a.d-cd.net/ZYAAAgHjoeA-960.jpg'
-
+                        'https://a.d-cd.net/866e316s-960.jpg',
+                        'https://avatars.mds.yandex.net/get-autoru-vos/2160600/8067fe3f49b6b81297714c745c426c29/456x342'
                     ]
                 },
                 'electronics': {
                     text: 'Мультимедийная система работает нормально, но есть проблемы с правым динамиком',
-                    photos: ['https://audi-rus.ru/img/nasha-rabota/Audi_Q3_Red/Audi_Q3_Red-15.jpg']
+                    photos: [
+                        'https://a.d-cd.net/XqAAAgLfUeA-960.jpg',
+                        'https://a.d-cd.net/de27ef9s-480.jpg',
+                        'https://i.ytimg.com/vi/VxkhT8_Hvbc/hq720.jpg?sqp=-oaymwE7CK4FEIIDSFryq4qpAy0IARUAAAAAGAElAADIQj0AgKJD8AEB-AH-CYAC0AWKAgwIABABGD4gUihlMA8=&rs=AOn4CLAbzb6PmacWcn5ikNZqEhJSSC0_6Q'
+                    ]
                 },
                 'smells': {
                     text: 'Запахов не обнаружено, салон чистый',
