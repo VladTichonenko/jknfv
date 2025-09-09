@@ -1386,6 +1386,68 @@
             ]
         };
         
+        // Данные для сторис задней части
+        const rearStoriesData = {
+            'seats': [
+                {
+                    image: 'https://a.d-cd.net/vwAAAgH2VOA-1920.jpg',
+                    caption: 'Проверьте состояние задних сидений'
+                }
+            ],
+            'dashboard': [
+                {
+                    image: 'https://a.d-cd.net/7871325s-1920.jpg',
+                    caption: 'Проверьте работу заднего климат-контроля'
+                }
+            ],
+            'electronics': [
+                {
+                    image: 'https://ae04.alicdn.com/kf/Sa579b5d25da940128930ada792a5e7426.jpg_480x480.jpg',
+                    caption: 'Проверьте розетки и USB-порты'
+                }
+            ],
+            'smells': [
+                {
+                    image: 'https://www.tonirovanie.ru/images/blog/2021/07/10.jpg',
+                    caption: 'Проверьте заднюю часть на отсутствие запахов'
+                }
+            ]
+        };
+        
+        // Данные для сторис багажника
+        const trunkStoriesData = {
+            'seats': [
+                {
+                    image: 'https://i.infocar.ua/img/mats/8348/ins/1337241442205.jpg',
+                    caption: 'Проверьте механизм складывания спинок'
+                },
+               
+            ],
+            'dashboard': [
+                {
+                    image: 'https://cdn1.ozone.ru/s3/multimedia-1-j/7093029691.jpg',
+                    caption: 'Осмотрите органайзеры и шторку багажника'
+                },
+                {
+                    image: 'https://a.allegroimg.com/s512/03ccd9/ece722f74605ad114733248a41af/LAMPKA-OSWIETLENIE-LED-DO-BAGAZNIKA-WNETRZA-SAMOCHODU-AUDI-A3-A6-A7-A8-S8-Jakosc-czesci-zgodnie-z-GVO-P-zamiennik-o-jakosci-porownywalnej-do-oryginalu',
+                    caption: 'Проверьте подсветку багажника'
+                }
+            ],
+            'electronics': [
+                {
+                    image: 'https://a.d-cd.net/PEAAAgNGPuA-960.jpg',
+                    caption: 'Проверьте розетку багажника'
+                }
+              
+            ],
+            'smells': [
+                {
+                    image: 'https://a.d-cd.net/wGAAAgPOGeA-960.jpg',
+                    caption: 'Проверьте багажник на отсутствие запахов'
+                }
+            ]
+        };
+        
         // Area-specific checklist content (text + photo per item)
         const areaChecklistContent = {
             front: {
@@ -1413,7 +1475,7 @@
                 },
                 dashboard: {
                     text: 'Задний климат и управление',
-                    photo: 'https://avatars.mds.yandex.net/get-autoru-vos/2160600/8067fe3f49b6b81297714c745c426c29/456x342'
+                    photo: 'https://a.d-cd.net/7871325s-1920.jpg'
                 },
                 electronics: {
                     text: 'Розетки, USB, подсветка',
@@ -1458,7 +1520,24 @@
                 icon.addEventListener('click', function(e) {
                     e.stopPropagation();
                     const taskId = this.closest('.inspection-item').id.replace('check-', '');
-                    showStories(storiesData[taskId] || storiesData['seats']);
+                    
+                    // Выбираем правильные данные сторис в зависимости от текущей области
+                    let currentStoriesData;
+                    switch(appState.currentArea) {
+                        case 'front':
+                            currentStoriesData = storiesData;
+                            break;
+                        case 'rear':
+                            currentStoriesData = rearStoriesData;
+                            break;
+                        case 'trunk':
+                            currentStoriesData = trunkStoriesData;
+                            break;
+                        default:
+                            currentStoriesData = storiesData;
+                    }
+                    
+                    showStories(currentStoriesData[taskId] || currentStoriesData['seats']);
                 });
             });
             
@@ -1773,6 +1852,38 @@
             
             // Load new area data
             loadAreaData(area);
+            
+            // Переустанавливаем обработчики событий для новых данных сторис
+            document.querySelectorAll('.task-icon.info').forEach(icon => {
+                // Удаляем старый обработчик
+                icon.replaceWith(icon.cloneNode(true));
+            });
+            
+            // Добавляем новые обработчики
+            document.querySelectorAll('.task-icon.info').forEach(icon => {
+                icon.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const taskId = this.closest('.inspection-item').id.replace('check-', '');
+                    
+                    // Выбираем правильные данные сторис в зависимости от текущей области
+                    let currentStoriesData;
+                    switch(appState.currentArea) {
+                        case 'front':
+                            currentStoriesData = storiesData;
+                            break;
+                        case 'rear':
+                            currentStoriesData = rearStoriesData;
+                            break;
+                        case 'trunk':
+                            currentStoriesData = trunkStoriesData;
+                            break;
+                        default:
+                            currentStoriesData = storiesData;
+                    }
+                    
+                    showStories(currentStoriesData[taskId] || currentStoriesData['seats']);
+                });
+            });
         }
         
         // Show review section with all photos
