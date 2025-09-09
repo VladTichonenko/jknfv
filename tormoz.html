@@ -289,6 +289,19 @@
             transition: var(--transition);
         }
         
+        /* Thumbnail inside checklist item */
+        .inspection-item .item-photo {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            object-fit: cover;
+            margin-left: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            flex-shrink: 0;
+            position: relative;
+            z-index: 2;
+        }
+        
         .inspection-item.checked {
             background: linear-gradient(135deg, var(--success), var(--success-dark));
             color: white;
@@ -1056,6 +1069,7 @@
                 
                <div class="inspection-item animate-in delay-1" id="check-seats">
     <i class="fas fa-check"></i>
+    <img class="item-photo" alt="Фото пункта">
     <span>Проверить кнопку массажа</span>
     <div class="task-icons">
         <div class="task-icon info" title="Показать пример">
@@ -1069,6 +1083,7 @@
                 
                 <div class="inspection-item animate-in delay-2" id="check-dashboard">
     <i class="fas fa-check"></i>
+    <img class="item-photo" alt="Фото пункта">
     <span>Осмотреть приборную панель</span>
     <div class="task-icons">
         <div class="task-icon info" title="Показать пример">
@@ -1081,6 +1096,7 @@
 </div>
                 <div class="inspection-item animate-in delay-1" id="check-electronics">
     <i class="fas fa-check"></i>
+    <img class="item-photo" alt="Фото пункта">
     <span>Проверить электронику</span>
     <div class="task-icons">
         <div class="task-icon info" title="Показать пример">
@@ -1094,6 +1110,7 @@
                 
                <div class="inspection-item animate-in delay-1" id="check-smells">
     <i class="fas fa-check"></i>
+    <img class="item-photo" alt="Фото пункта">
     <span>Проверить наличие запахов</span>
     <div class="task-icons">
         <div class="task-icon info" title="Показать пример">
@@ -1275,6 +1292,13 @@
             }
         };
         
+        // Predefined photos for each area (used if user photo not set)
+        const predefinedPhotos = {
+            'front': 'https://carexpert.ru/img/int1200/audi6i18-02.jpg',
+            'rear': 'https://lh6.googleusercontent.com/proxy/eZfTTDcwcVAOBzhQeQIH-451aQ09iWHtv-SSor0zgaOm2Welf413jEunO9bocTRbOrI1xz3uZomMsR3y7veR',
+            'trunk': 'https://i.infocar.ua/img/mats/8348/ins/1337241442205.jpg'
+        };
+        
         // DOM elements
         const photoInput = document.getElementById('photo-input');
         const photoPlaceholder = document.getElementById('photo-placeholder');
@@ -1360,6 +1384,64 @@
                     caption: 'Проверьте салон на отсутствие посторонних запахов'
                 }
             ]
+        };
+        
+        // Area-specific checklist content (text + photo per item)
+        const areaChecklistContent = {
+            front: {
+                seats: {
+                    text: 'Передние сиденья и регулировки',
+                    photo: 'https://a.d-cd.net/grVEzTDdA-o9iFC4TKJDIlwNV7M-960.jpg'
+                },
+                dashboard: {
+                    text: 'Приборная панель и индикаторы',
+                    photo: 'https://a.d-cd.net/gYAAAgLEXeA-960.jpg'
+                },
+                electronics: {
+                    text: 'Мультимедиа и органы управления',
+                    photo: 'https://www.kibercar.com/upload/resize_cache/iblock/38c/tbe1c352og8s8q6owkp5cb1z5g521hgx/600_360_0/carplay_detal_audi.png'
+                },
+                smells: {
+                    text: 'Запахи в передней части',
+                    photo: 'https://a.d-cd.net/wGAAAgPOGeA-960.jpg'
+                }
+            },
+            rear: {
+                seats: {
+                    text: 'Задние сиденья и ремни',
+                    photo: 'https://a.d-cd.net/6umAarUfzzUXKQ8RMHbwSNEGHhA-960.jpg'
+                },
+                dashboard: {
+                    text: 'Задний климат и управление',
+                    photo: 'https://avatars.mds.yandex.net/get-autoru-vos/2160600/8067fe3f49b6b81297714c745c426c29/456x342'
+                },
+                electronics: {
+                    text: 'Розетки, USB, подсветка',
+                    photo: 'https://a.d-cd.net/hEAAAgCIkeA-960.jpg'
+                },
+                smells: {
+                    text: 'Запахи в задней части',
+                    photo: 'https://i.ytimg.com/vi/VxkhT8_Hvbc/hq720.jpg?sqp=-oaymwE7CK4FEIIDSFryq4qpAy0IARUAAAAAGAElAADIQj0AgKJD8AEB-AH-CYAC0AWKAgwIABABGD4gUihlMA8=&rs=AOn4CLAbzb6PmacWcn5ikNZqEhJSSC0_6Q'
+                }
+            },
+            trunk: {
+                seats: {
+                    text: 'Складывание спинок, фиксаторы',
+                    photo: 'https://i.infocar.ua/img/mats/8348/ins/1337241442205.jpg'
+                },
+                dashboard: {
+                    text: 'Органайзеры, шторка, подсветка',
+                    photo: 'https://a.d-cd.net/de27ef9s-480.jpg'
+                },
+                electronics: {
+                    text: 'Розетка багажника, электропривод',
+                    photo: 'https://a.d-cd.net/XqAAAgLfUeA-960.jpg'
+                },
+                smells: {
+                    text: 'Запахи в багажнике',
+                    photo: 'https://a.d-cd.net/wGAAAgPOGeA-960.jpg'
+                }
+            }
         };
         
         // Initialize the app
@@ -1570,8 +1652,16 @@
                 photoPreview.style.display = 'block';
                 photoPlaceholder.style.display = 'none';
             } else {
-                photoPreview.style.display = 'none';
-                photoPlaceholder.style.display = 'flex';
+                // Show predefined photo for selected area
+                const fallback = predefinedPhotos[area];
+                if (fallback) {
+                    photoPreview.src = fallback;
+                    photoPreview.style.display = 'block';
+                    photoPlaceholder.style.display = 'none';
+                } else {
+                    photoPreview.style.display = 'none';
+                    photoPlaceholder.style.display = 'flex';
+                }
             }
             
             // Load checks
@@ -1581,6 +1671,14 @@
                     item.classList.add('checked');
                 } else {
                     item.classList.remove('checked');
+                }
+                // Update text and thumbnail per area
+                const content = areaChecklistContent[area]?.[checkId];
+                if (content) {
+                    const textSpan = item.querySelector('span');
+                    const thumb = item.querySelector('.item-photo');
+                    if (textSpan) textSpan.textContent = content.text;
+                    if (thumb) thumb.src = content.photo;
                 }
             });
         }
@@ -1760,11 +1858,6 @@
         // Event listeners
         photoPlaceholder.addEventListener('click', () => {
             // Use predefined photo for demo
-            const predefinedPhotos = {
-                'front': 'https://carexpert.ru/img/int1200/audi6i18-02.jpg',
-                'rear': 'https://lh6.googleusercontent.com/proxy/eZfTTDcwcVAOBzhQeQIH-451aQ09iWHtv-SSor0zgaOm2Welf413jEunO9bocTRbOrI1xz3uZomMsR3y7veR',
-                'trunk': 'https://i.infocar.ua/img/mats/8348/ins/1337241442205.jpg'
-            };
             
             photoPreview.src = predefinedPhotos[appState.currentArea];
             photoPreview.style.display = 'block';
